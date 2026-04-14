@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Scramble Game</title>
+  <style>
+    body{
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        text-align: center;
+        padding: 30px;
+        background-color: #f0f0f0;
+    }
+
+    button{
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        
+    }
+        
+  </style>
+</head>
+<body>
+  <h1>Word Scramble Game</h1>
+
+  <div>
+    <p>Try to guess the word!</p>
+    <h2 id="scrambledWord"></h2>
+  </div>
+  <div>
+    <input type="text" id="guess" placeholder="Enter your guess here">
+  </div>
+  <br>
+
+  <button id="checkAnswer"> Check Answer</button>
+  <button id="newWord">New Word</button>
+  <div id="result"></div>
+  
+ 
+</body>
+<script>
+    const words = ["Shinchan", "Doraemon", "Luffy", "Pikachu", "Saitama"];
+  
+    let currentWord = "";
+    
+
+    document.getElementById("checkAnswer").addEventListener("click", checkAnswer);
+    document.getElementById("newWord").addEventListener("click", newWord);
+
+    function newWord(){
+        
+        const randomIndex = Math.floor(Math.random() * words.length);
+        // 0.5 = Math.floor(0.5) = 0
+        // 1.5 = Math.floor(1.9) = 1
+        // 2.5 = Math.floor(2.3) = 2
+        currentWord = words[randomIndex];
+        document.getElementById("scrambledWord").innerText = scrambleWord(currentWord);
+
+    }
+
+    function scrambleWord(word){
+        let scrambled = word.split("");
+        // currentWord = "Shinchan"
+        // scrambled = ["h", "S", "n", "a", "h", "c", "n", "i"]
+        /* for (let i = scrambled.length - 1; i > 0; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        const temp = scrambled[i];
+        scrambled[i] = scrambled[randomIndex];
+        scrambled[randomIndex] = temp;
+      } */
+
+      for(let i = scrambled.length -1; i>0; i--){
+        const randomIndex = Math.floor(Math.random() * (i+1))
+        // i = 5, i+1=6  
+        // 0.9999 * 5 = 4.9 = Math.floor(4.5) = 4
+        [scrambled[i], scrambled[randomIndex]] = [scrambled[randomIndex], scrambled[i]];
+      }
+        return scrambled.join("");
+    }
+
+    function checkAnswer(){
+        const userGuess = document.getElementById("guess").value;
+        const resultDiv = document.getElementById("result");
+
+        if(userGuess.toLowerCase() === currentWord.toLowerCase()){
+            resultDiv.innerText = "Correct! Well done!";
+            
+        } else {
+            resultDiv.innerText = `Wrong! Try again!`;
+        }
+    }
+
+    
+
+    newWord();
+
+
+
+
+</script>
+</html>
