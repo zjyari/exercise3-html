@@ -1,100 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Word Scramble Game</title>
-  <style>
-    body{
-        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        text-align: center;
-        padding: 30px;
-        background-color: #f0f0f0;
-    }
-
-    button{
-        padding: 10px 20px;
-        margin: 10px;
-        font-size: 18px;
-        cursor: pointer;
-        
-    }
-        
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Scramble Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            letter-spacing: 5px;
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+     
+        #wordImage {
+            display: none;
+            margin: 20px auto;
+            max-width: 250px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Word Scramble Game</h1>
 
-  <div>
-    <p>Try to guess the word!</p>
+<div class="container">
+    <h1>Word Scramble Game</h1>
+    <p>Guess the correct word!</p>
     <h2 id="scrambledWord"></h2>
-  </div>
-  <div>
-    <input type="text" id="guess" placeholder="Enter your guess here">
-  </div>
-  <br>
+    
+    <input type="text" id="guess" placeholder="Type your answer...">
+    <br>
+    <button id="checkAnswer">Check Answer</button>
+    <button id="newWord">New Word</button>
+    
+    <div id="result"></div>
+    <img id="wordImage" src="" alt="Word Image">
+</div>
 
-  <button id="checkAnswer"> Check Answer</button>
-  <button id="newWord">New Word</button>
-  <div id="result"></div>
-  
- 
-</body>
 <script>
     const words = ["Shinchan", "Doraemon", "Luffy", "Pikachu", "Saitama"];
-  
-    let currentWord = "";
     
+    // Mapping words to their specific extensions provided in the files
+    const imageMap = {
+        "Shinchan": "shinchan.jpeg",
+        "Doraemon": "doraemon.png",
+        "Luffy": "luffy.webp",
+        "Pikachu": "pikachu.jpeg",
+        "Saitama": "saitama.webp"
+    };
 
-    document.getElementById("checkAnswer").addEventListener("click", checkAnswer);
-    document.getElementById("newWord").addEventListener("click", newWord);
+    let currentWord = "";
 
-    function newWord(){
-        
-        const randomIndex = Math.floor(Math.random() * words.length);
-        // 0.5 = Math.floor(0.5) = 0
-        // 1.5 = Math.floor(1.9) = 1
-        // 2.5 = Math.floor(2.3) = 2
-        currentWord = words[randomIndex];
-        document.getElementById("scrambledWord").innerText = scrambleWord(currentWord);
-
+    function scramble(word) {
+        let arr = word.split("");
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr.join("");
     }
 
-    function scrambleWord(word){
-        let scrambled = word.split("");
-        // currentWord = "Shinchan"
-        // scrambled = ["h", "S", "n", "a", "h", "c", "n", "i"]
-        /* for (let i = scrambled.length - 1; i > 0; i--) {
-        const randomIndex = Math.floor(Math.random() * (i + 1));
-        const temp = scrambled[i];
-        scrambled[i] = scrambled[randomIndex];
-        scrambled[randomIndex] = temp;
-      } */
-
-      for(let i = scrambled.length -1; i>0; i--){
-        const randomIndex = Math.floor(Math.random() * (i+1))
-        // i = 5, i+1=6  
-        // 0.9999 * 5 = 4.9 = Math.floor(4.5) = 4
-        [scrambled[i], scrambled[randomIndex]] = [scrambled[randomIndex], scrambled[i]];
-      }
-        return scrambled.join("");
+    function generateNewWord() {
+        currentWord = words[Math.floor(Math.random() * words.length)];
+        document.getElementById("scrambledWord").innerText = scramble(currentWord);
+        document.getElementById("guess").value = "";
+        document.getElementById("result").innerText = "";
+        document.getElementById("wordImage").style.display = "none";
     }
 
-    function checkAnswer(){
-        const userGuess = document.getElementById("guess").value;
-        const resultDiv = document.getElementById("result");
+    function checkAnswer() {
+        let userGuess = document.getElementById("guess").value.trim().toLowerCase();
+        let resultDiv = document.getElementById("result");
+        let img = document.getElementById("wordImage");
 
-        if(userGuess.toLowerCase() === currentWord.toLowerCase()){
+        if (userGuess === currentWord.toLowerCase()) {
             resultDiv.innerText = "Correct! Well done!";
+            resultDiv.style.color = "green";
             
+           
+            img.src = imageMap[currentWord];
+            img.style.display = "block";
         } else {
-            resultDiv.innerText = `Wrong! Try again!`;
+            resultDiv.innerText = "Wrong! Try again!";
+            resultDiv.style.color = "red";
+            img.style.display = "none";
         }
     }
 
-    
+    document.getElementById("checkAnswer").onclick = checkAnswer;
+    document.getElementById("newWord").onclick = generateNewWord;
 
-    newWord();
+    generateNewWord();
+</script>
+
+</body>
+</html>
 
 
 
